@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEDIVIA - Emergency Medical Help</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            object-fit: contain;
+        }
+
+        .app-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+            letter-spacing: 1px;
+        }
+
+        .emergency-badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-left: 4px solid #4ecdc4;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .emergency-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .category-card {
+            background: linear-gradient(135deg, #fff, #f8f9ff);
+            border: 2px solid #e8f2ff;
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            border-color: #4ecdc4;
+        }
+
+        .category-card.selected {
+            border-color: #ff6b6b;
+            background: linear-gradient(135deg, #fff5f5, #ffe8e8);
+        }
+
+        .category-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .category-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .category-desc {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .chatbot-section {
+            display: none;
+            background: linear-gradient(135deg, #f8f9ff, #e8f2ff);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4ecdc4;
+        }
+
+        .chatbot-section.active {
+            display: block;
+        }
+
+        .chat-messages {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 12px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .bot-message {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
+            margin-right: auto;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            margin-left: auto;
+        }
+
+        .instruction-card {
+            background: linear-gradient(135deg, #fff5f5, #ffe8e8);
+            border: 1px solid #ffcccb;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .instruction-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #c0392b;
+            margin-bottom: 10px;
+        }
+
+        .instruction-steps {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .instruction-steps li {
+            counter-increment: step-counter;
+            margin-bottom: 10px;
+            padding-left: 35px;
+            position: relative;
+        }
+
+        .instruction-steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #e74c3c;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .chat-input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e8f2ff;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .chat-input:focus {
+            border-color: #4ecdc4;
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+        }
+
+        .quick-responses {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .quick-response {
+            background: linear-gradient(135deg, #f8f9ff, #e8f2ff);
+            border: 1px solid #4ecdc4;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .quick-response:hover {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
+        }
+
+        .emergency-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .emergency-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            border: none;
+            padding: 20px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .emergency-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .location-section {
+            background: linear-gradient(135deg, #f8f9ff, #e8f2ff);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4ecdc4;
+        }
+
+        .location-info {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .hospitals-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .hospital-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-left: 4px solid #4ecdc4;
+            transition: all 0.3s ease;
+        }
+
+        .hospital-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .hospital-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .hospital-info {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+
+        .directions-btn {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .directions-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4ecdc4;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        .footer-text {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-online {
+            background: #2ecc71;
+            animation: pulse 2s infinite;
+        }
+
+        .status-offline {
+            background: #e74c3c;
+        }
+
+        @media (max-width: 768px) {
+            .app-title {
+                font-size: 20px;
+            }
+            
+            .emergency-badge {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+            
+            .emergency-categories {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 15px;
+            }
+            
+            .category-card {
+                padding: 20px;
+            }
+            
+            .category-icon {
+                font-size: 36px;
+            }
+            
+            .emergency-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-section">
+            <img src="medivia_logo.jpeg" alt="MEDIVIA Logo" class="logo-img">
+            <div class="app-title">MEDIVIA</div>
+        </div>
+        <div class="emergency-badge">
+            <span class="status-indicator status-online"></span>
+            EMERGENCY READY
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Emergency Category Selection -->
+        <div class="section">
+            <h2 class="section-title">
+                🚨 Select Emergency Type
+            </h2>
+            <div class="emergency-categories">
+                <div class="category-card" onclick="selectCategory('medical')">
+                    <span class="category-icon">🏥</span>
+                    <div class="category-title">Medical Emergency</div>
+                    <div class="category-desc">Heart attack, stroke, severe injury</div>
+                </div>
+                <div class="category-card" onclick="selectCategory('accident')">
+                    <span class="category-icon">🚗</span>
+                    <div class="category-title">Accident</div>
+                    <div class="category-desc">Car crash, workplace injury</div>
+                </div>
+                <div class="category-card" onclick="selectCategory('fire')">
+                    <span class="category-icon">🔥</span>
+                    <div class="category-title">Fire Emergency</div>
+                    <div class="category-desc">Building fire, gas leak</div>
+                </div>
+                <div class="category-card" onclick="selectCategory('unconscious')">
+                    <span class="category-icon">😵</span>
+                    <div class="category-title">Unconscious Person</div>
+                    <div class="category-desc">Fainting, not responding</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Emergency Action Buttons -->
+        <div class="section">
+            <h2 class="section-title">
+                📞 Emergency Contacts
+            </h2>
+            <div class="emergency-buttons">
+                <a href="tel:+917416557557" class="emergency-btn">
+                    🚑 Call Ambulance
+                </a>
+                <a href="tel:+916309785411" class="emergency-btn">
+                    🚓 Call Police
+                </a>
+                <a href="tel:+919177507780" class="emergency-btn">
+                    🔥 Call Fire Department
+                </a>
+                <a href="#" class="emergency-btn" onclick="sendLocationSMS()">
+                    📍 Send Location via SMS
+                </a>
+            </div>
+        </div>
+
+        <!-- AI Chatbot Assistant -->
+        <div class="chatbot-section" id="chatbot">
+            <h2 class="section-title">
+                🤖 AI Emergency Assistant
+            </h2>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot-message">
+                    Hello! I'm here to help you in this emergency. Let me ask you a few important questions to provide the best guidance.
+                </div>
+            </div>
+            <div class="quick-responses" id="quickResponses">
+                <div class="quick-response" onclick="sendQuickResponse('Yes')">Yes</div>
+                <div class="quick-response" onclick="sendQuickResponse('No')">No</div>
+                <div class="quick-response" onclick="sendQuickResponse('Unclear')">Not Sure</div>
+            </div>
+            <div class="chat-input-section">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Type your response or symptoms...">
+                <button class="send-btn" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+
+        <!-- Location and Nearby Hospitals -->
+        <div class="location-section">
+            <h2 class="section-title">
+                📍 Your Location & Nearby Hospitals
+            </h2>
+            <div class="location-info" id="locationInfo">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Detecting your location...
+                </div>
+            </div>
+            <div class="hospitals-list" id="hospitalsList">
+                <!-- Hospitals will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-text">Powered by MEDIVIA – Smart Health Rescue</div>
+    </div>
+
+    <script>
+        let currentCategory = null;
+        let chatStep = 0;
+        let userLocation = null;
+        let chatHistory = [];
+
+        // Emergency categories and their corresponding chatbot flows
+        const emergencyFlows = {
+            medical: [
+                "Is the person breathing?",
+                "Are they conscious and able to respond?",
+                "What symptoms are you noticing? (chest pain, difficulty breathing, etc.)",
+                "Are they experiencing chest pain or difficulty breathing?"
+            ],
+            accident: [
+                "Is the person conscious?",
+                "Are they bleeding? If yes, how severely?",
+                "Can they move all limbs?",
+                "What type of accident occurred?"
+            ],
+            fire: [
+                "Are you in a safe location away from the fire?",
+                "Is anyone trapped in the building?",
+                "Can you see or smell smoke?",
+                "What type of fire is it? (building, vehicle, etc.)"
+            ],
+            unconscious: [
+                "Is the person breathing?",
+                "Are they responsive to voice or touch?",
+                "Did you see them collapse or find them this way?",
+                "Are there any visible injuries?"
+            ]
+        };
+
+        // Medical instructions based on category and responses
+        const medicalInstructions = {
+            medical: {
+                cpr: {
+                    title: "CPR Instructions",
+                    steps: [
+                        "Place the person on their back on a firm surface",
+                        "Tilt their head back and lift their chin",
+                        "Place the heel of one hand on the center of their chest",
+                        "Place your other hand on top, interlacing fingers",
+                        "Push hard and fast at least 2 inches deep",
+                        "Allow complete chest recoil between compressions",
+                        "Compress at a rate of 100-120 per minute",
+                        "Continue until help arrives"
+                    ]
+                },
+                breathing: {
+                    title: "Breathing Emergency",
+                    steps: [
+                        "Keep the person calm and seated upright",
+                        "Loosen tight clothing around neck and chest",
+                        "If they have an inhaler, help them use it",
+                        "Monitor breathing and pulse",
+                        "Be prepared to perform CPR if they stop breathing"
+                    ]
+                }
+            },
+            accident: {
+                bleeding: {
+                    title: "Severe Bleeding Control",
+                    steps: [
+                        "Apply direct pressure to the wound with a clean cloth",
+                        "Elevate the injured area if possible",
+                        "Do not remove objects embedded in the wound",
+                        "Apply additional bandages if blood soaks through",
+                        "Check for signs of shock (pale, weak pulse)"
+                    ]
+                },
+                spinal: {
+                    title: "Suspected Spinal Injury",
+                    steps: [
+                        "Do NOT move the person unless in immediate danger",
+                        "Keep their head and neck aligned",
+                        "Talk to them to keep them conscious",
+                        "Do not give food or water",
+                        "Wait for professional medical help"
+                    ]
+                }
+            },
+            unconscious: {
+                recovery: {
+                    title: "Recovery Position",
+                    steps: [
+                        "Check for breathing and pulse",
+                        "If breathing but unconscious, place in recovery position",
+                        "Turn them onto their side",
+                        "Tilt head back to keep airway open",
+                        "Monitor breathing continuously",
+                        "Be ready to start CPR if breathing stops"
+                    ]
+                }
+            }
+        };
+
+        // Vizag hospitals data
+        const vizagHospitals = [
+            {
+                name: "King George Hospital",
+                address: "Maharanipeta, Visakhapatnam",
+                distance: "2.5 km",
+                time: "8 mins",
+                phone: "+91-891-2546969",
+                type: "Government Hospital"
+            },
+            {
+                name: "Apollo Hospital",
+                address: "Asilmetta, Visakhapatnam",
+                distance: "3.2 km",
+                time: "10 mins",
+                phone: "+91-891-2888888",
+                type: "Private Hospital"
+            },
+            {
+                name: "Care Hospital",
+                address: "Ramnagar, Visakhapatnam",
+                distance: "4.1 km",
+                time: "12 mins",
+                phone: "+91-891-2710000",
+                type: "Private Hospital"
+            },
+            {
+                name: "Visakha Institute of Medical Sciences",
+                address: "Aganampudi, Visakhapatnam",
+                distance: "5.8 km",
+                time: "15 mins",
+                phone: "+91-891-2790000",
+                type: "Private Hospital"
+            },
+            {
+                name: "Ramesh Hospitals",
+                address: "Akkayyapalem, Visakhapatnam",
+                distance: "3.7 km",
+                time: "11 mins",
+                phone: "+91-891-2525252",
+                type: "Private Hospital"
+            }
+        ];
+
+        function selectCategory(category) {
+            currentCategory = category;
+            chatStep = 0;
+            chatHistory = [];
+            
+            // Update UI
+            document.querySelectorAll('.category-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.target.closest('.category-card').classList.add('selected');
+            
+            // Show chatbot
+            const chatbot = document.getElementById('chatbot');
+            chatbot.classList.add('active');
+            
+            // Start conversation
+            startChatbot();
+        }
+
+        function startChatbot() {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = '<div class="message bot-message">I understand this is a ' + currentCategory + ' emergency. Let me guide you through the next steps.</div>';
+            
+            setTimeout(() => {
+                askNextQuestion();
+            }, 1000);
+        }
+
+        function askNextQuestion() {
+            if (chatStep < emergencyFlows[currentCategory].length) {
+                const question = emergencyFlows[currentCategory][chatStep];
+                addBotMessage(question);
+                chatStep++;
+            } else {
+                provideInstructions();
+            }
+        }
+
+        function addBotMessage(message) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot-message';
+            messageDiv.textContent = message;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function addUserMessage(message) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user-message';
+            messageDiv.textContent = message;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                addUserMessage(message);
+                chatHistory.push(message);
+                input.value = '';
+                
+                setTimeout(() => {
+                    processResponse(message);
+                }, 500);
+            }
+        }
+
+        function sendQuickResponse(response) {
+            addUserMessage(response);
+            chatHistory.push(response);
+            
+            setTimeout(() => {
+                processResponse(response);
+            }, 500);
+        }
+
+        function processResponse(response) {
+            // Simple response processing based on keywords
+            const lowerResponse = response.toLowerCase();
+            
+            if (lowerResponse.includes('no') || lowerResponse.includes('not breathing')) {
+                if (currentCategory === 'medical' || currentCategory === 'unconscious') {
+                    addBotMessage("This is critical! I'll show you CPR instructions immediately.");
+                    displayInstructions('cpr');
+                }
+            } else if (lowerResponse.includes('bleeding')) {
+                addBotMessage("I'll show you how to control bleeding safely.");
+                displayInstructions('bleeding');
+            } else if (lowerResponse.includes('breathing') || lowerResponse.includes('chest pain')) {
+                addBotMessage("Here are breathing emergency instructions.");
+                displayInstructions('breathing');
+            } else {
+                askNextQuestion();
+            }
+        }
+
+        function displayInstructions(type) {
+            const chatMessages = document.getElementById('chatMessages');
+            const instructions = medicalInstructions[currentCategory][type];
+            
+            if (instructions) {
+                const instructionDiv = document.createElement('div');
+                instructionDiv.className = 'instruction-card';
+                
+                let stepsHTML = '<ol class="instruction-steps">';
+                instructions.steps.forEach(step => {
+                    stepsHTML += `<li>${step}</li>`;
+                });
+                stepsHTML += '</ol>';
+                
+                instructionDiv.innerHTML = `
+                    <div class="instruction-title">${instructions.title}</div>
+                    ${stepsHTML}
+                `;
+                
+                chatMessages.appendChild(instructionDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            addBotMessage("Please call emergency services immediately if you haven't already. Continue following these steps until help arrives.");
+        }
+
+        function provideInstructions() {
+            addBotMessage("Based on your responses, here are the most important steps to take:");
+            
+            // Provide category-specific instructions
+            if (currentCategory === 'medical') {
+                displayInstructions('breathing');
+            } else if (currentCategory === 'accident') {
+                displayInstructions('bleeding');
+            } else if (currentCategory === 'unconscious') {
+                displayInstructions('recovery');
+            }
+        }
+
+        // Location detection and hospital listing
+        function detectLocation() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        displayLocationInfo();
+                        loadNearbyHospitals();
+                    },
+                    function(error) {
+                        console.error("Error getting location:", error);
+                        // Fallback to Vizag coordinates
+                        userLocation = {
+                            lat: 17.6868,
+                            lng: 83.2185
+                        };
+                        displayLocationInfo();
+                        loadNearbyHospitals();
+                    }
+                );
+            } else {
+                // Fallback to Vizag coordinates
+                userLocation = {
+                    lat: 17.6868,
+                    lng: 83.2185
+                };
+                displayLocationInfo();
+                loadNearbyHospitals();
+            }
+        }
+
+        function displayLocationInfo() {
+            const locationInfo = document.getElementById('locationInfo');
+            locationInfo.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <span style="font-size: 20px;">📍</span>
+                    <strong>Your Location Detected</strong>
+                </div>
+                <div style="color: #7f8c8d; font-size: 14px;">
+                    Latitude: ${userLocation.lat.toFixed(6)}<br>
+                    Longitude: ${userLocation.lng.toFixed(6)}
+                </div>
+                <div style="margin-top: 10px;">
+                    <small style="color: #27ae60;">✅ Location shared with emergency services</small>
+                </div>
+            `;
+        }
+
+        function loadNearbyHospitals() {
+            const hospitalsList = document.getElementById('hospitalsList');
+            
+            // Simulate loading
+            setTimeout(() => {
+                hospitalsList.innerHTML = '';
+                
+                vizagHospitals.forEach(hospital => {
+                    const hospitalCard = document.createElement('div');
+                    hospitalCard.className = 'hospital-card';
+                    hospitalCard.innerHTML = `
+                        <div class="hospital-name">${hospital.name}</div>
+                        <div class="hospital-info">
+                            📍 ${hospital.address}<br>
+                            📞 ${hospital.phone}<br>
+                            ⏱️ ${hospital.time} away (${hospital.distance})<br>
+                            🏥 ${hospital.type}
+                        </div>
+                        <a href="https://maps.google.com/maps?q=${hospital.name}, ${hospital.address}" target="_blank" class="directions-btn">
+                            🗺️ Get Directions
+                        </a>
+                    `;
+                    hospitalsList.appendChild(hospitalCard);
+                });
+            }, 1000);
+        }
+
+        function sendLocationSMS() {
+            if (userLocation) {
+                const message = `Emergency! Live location: ${userLocation.lat}, ${userLocation.lng}`;
+                const smsUrl = `sms:+917416557557?body=${encodeURIComponent(message)}`;
+                window.location.href = smsUrl;
+            } else {
+                // Fallback with Vizag coordinates
+                const message = `Emergency! Live location: 17.6868, 83.2185`;
+                const smsUrl = `sms:+917416557557?body=${encodeURIComponent(message)}`;
+                window.location.href = smsUrl;
+            }
+        }
+
+        // Event listeners
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            detectLocation();
+            
+            // Add some initial guidance
+            setTimeout(() => {
+                if (!currentCategory) {
+                    const chatMessages = document.getElementById('chatMessages');
+                    const welcomeMessage = document.createElement('div');
+                    welcomeMessage.className = 'message bot-message';
+                    welcomeMessage.textContent = 'Welcome to MEDIVIA Emergency Assistant! Please select your emergency type above to get started with personalized guidance.';
+                    chatMessages.appendChild(welcomeMessage);
+                }
+            }, 2000);
+        });
+
+        // Additional emergency protocols
+        const additionalProtocols = {
+            fire: {
+                evacuation: {
+                    title: "Fire Evacuation Protocol",
+                    steps: [
+                        "Stay low to avoid smoke inhalation",
+                        "Feel doors before opening - if hot, find another exit",
+                        "Use stairs, never elevators",
+                        "Cover nose and mouth with cloth",
+                        "Once outside, stay outside",
+                        "Call fire department immediately",
+                        "Go to designated meeting point"
+                    ]
+                },
+                stop_drop_roll: {
+                    title: "If Your Clothes Catch Fire",
+                    steps: [
+                        "STOP - Don't run, this will make flames worse",
+                        "DROP - Drop to the ground",
+                        "ROLL - Cover your face and roll to smother flames",
+                        "COOL - Cool burns with water for 10-15 minutes",
+                        "CALL - Get medical help immediately"
+                    ]
+                }
+            },
+            choking: {
+                heimlich: {
+                    title: "Heimlich Maneuver (For Conscious Person)",
+                    steps: [
+                        "Stand behind the person",
+                        "Place arms around their waist",
+                        "Make a fist with one hand",
+                        "Place fist above navel, below ribcage",
+                        "Grasp fist with other hand",
+                        "Give quick upward thrusts",
+                        "Repeat until object is expelled"
+                    ]
+                }
+            }
+        };
+
+        // Enhanced chatbot responses
+        function enhancedProcessResponse(response) {
+            const lowerResponse = response.toLowerCase();
+            
+            // Fire emergency responses
+            if (currentCategory === 'fire') {
+                if (lowerResponse.includes('trapped') || lowerResponse.includes('inside')) {
+                    addBotMessage("If someone is trapped, DO NOT enter the building. Call fire department immediately and wait for professionals.");
+                    displayInstructions('evacuation');
+                } else if (lowerResponse.includes('smoke')) {
+                    addBotMessage("Smoke is dangerous. Here's how to evacuate safely:");
+                    displayInstructions('evacuation');
+                } else if (lowerResponse.includes('clothes') || lowerResponse.includes('burning')) {
+                    addBotMessage("If clothes are on fire, follow these steps:");
+                    displayInstructions('stop_drop_roll');
+                }
+            }
+            
+            // Medical emergency responses
+            else if (currentCategory === 'medical') {
+                if (lowerResponse.includes('choking') || lowerResponse.includes('can\'t breathe')) {
+                    addBotMessage("For choking, use the Heimlich maneuver:");
+                    displayInstructions('heimlich');
+                } else if (lowerResponse.includes('heart') || lowerResponse.includes('chest')) {
+                    addBotMessage("Possible heart attack. Keep person calm and call ambulance immediately.");
+                    displayInstructions('heart_attack');
+                } else if (lowerResponse.includes('stroke') || lowerResponse.includes('slurred')) {
+                    addBotMessage("Possible stroke. Time is critical - call emergency services now!");
+                    displayInstructions('stroke');
+                }
+            }
+            
+            // Accident responses
+            else if (currentCategory === 'accident') {
+                if (lowerResponse.includes('head') || lowerResponse.includes('neck')) {
+                    addBotMessage("Possible head/neck injury. Do NOT move the person unless in immediate danger.");
+                    displayInstructions('spinal');
+                } else if (lowerResponse.includes('burn') || lowerResponse.includes('burned')) {
+                    addBotMessage("For burns, follow these steps:");
+                    displayInstructions('burns');
+                }
+            }
+            
+            // Default response
+            else {
+                askNextQuestion();
+            }
+        }
+
+        // Additional medical protocols
+        const extendedProtocols = {
+            medical: {
+                heart_attack: {
+                    title: "Heart Attack Response",
+                    steps: [
+                        "Call emergency services immediately",
+                        "Help person sit in comfortable position",
+                        "Loosen tight clothing",
+                        "If they have prescribed nitroglycerin, help them take it",
+                        "Give aspirin if not allergic (chew, don't swallow whole)",
+                        "Monitor breathing and pulse",
+                        "Be ready to perform CPR if needed"
+                    ]
+                },
+                stroke: {
+                    title: "Stroke Response (F.A.S.T.)",
+                    steps: [
+                        "F - Face: Check for facial drooping",
+                        "A - Arms: Can they raise both arms?",
+                        "S - Speech: Is speech slurred or strange?",
+                        "T - Time: Call emergency services NOW",
+                        "Keep person calm and comfortable",
+                        "Do not give food or water",
+                        "Note time symptoms started"
+                    ]
+                }
+            },
+            accident: {
+                burns: {
+                    title: "Burn Treatment",
+                    steps: [
+                        "Remove from heat source safely",
+                        "Cool burn with water for 10-15 minutes",
+                        "Remove jewelry/clothing before swelling",
+                        "Do NOT use ice or butter",
+                        "Cover with sterile gauze",
+                        "For severe burns, call emergency services",
+                        "Treat for shock if needed"
+                    ]
+                }
+            }
+        };
+
+        // Merge additional protocols
+        Object.keys(extendedProtocols).forEach(category => {
+            if (medicalInstructions[category]) {
+                Object.assign(medicalInstructions[category], extendedProtocols[category]);
+            }
+        });
+
+        // Enhanced location features
+        function watchLocation() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.watchPosition(
+                    function(position) {
+                        userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        displayLocationInfo();
+                    },
+                    function(error) {
+                        console.error("Error watching location:", error);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 5000,
+                        maximumAge: 60000
+                    }
+                );
+            }
+        }
+
+        // Auto-refresh location every 30 seconds during emergency
+        setInterval(function() {
+            if (currentCategory) {
+                detectLocation();
+            }
+        }, 30000);
+
+        // Enhanced hospital search with filters
+        function filterHospitals(type = 'all') {
+            const filteredHospitals = type === 'all' ? vizagHospitals : 
+                vizagHospitals.filter(hospital => hospital.type.toLowerCase().includes(type.toLowerCase()));
+            
+            const hospitalsList = document.getElementById('hospitalsList');
+            hospitalsList.innerHTML = '';
+            
+            filteredHospitals.forEach(hospital => {
+                const hospitalCard = document.createElement('div');
+                hospitalCard.className = 'hospital-card';
+                hospitalCard.innerHTML = `
+                    <div class="hospital-name">${hospital.name}</div>
+                    <div class="hospital-info">
+                        📍 ${hospital.address}<br>
+                        📞 ${hospital.phone}<br>
+                        ⏱️ ${hospital.time} away (${hospital.distance})<br>
+                        🏥 ${hospital.type}
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <a href="https://maps.google.com/maps?q=${hospital.name}, ${hospital.address}" target="_blank" class="directions-btn">
+                            🗺️ Get Directions
+                        </a>
+                        <a href="tel:${hospital.phone}" class="directions-btn" style="background: linear-gradient(135deg, #ff6b6b, #ee5a52);">
+                            📞 Call Hospital
+                        </a>
+                    </div>
+                `;
+                hospitalsList.appendChild(hospitalCard);
+            });
+        }
+
+        // Voice recognition for hands-free operation (if supported)
+        function initVoiceRecognition() {
+            if ('webkitSpeechRecognition' in window) {
+                const recognition = new webkitSpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    document.getElementById('chatInput').value = transcript;
+                    sendMessage();
+                };
+
+                recognition.onerror = function(event) {
+                    console.error('Speech recognition error:', event.error);
+                };
+
+                // Add voice button to chat input
+                const chatInputSection = document.querySelector('.chat-input-section');
+                const voiceBtn = document.createElement('button');
+                voiceBtn.className = 'send-btn';
+                voiceBtn.innerHTML = '🎤';
+                voiceBtn.onclick = function() {
+                    recognition.start();
+                };
+                chatInputSection.appendChild(voiceBtn);
+            }
+        }
+
+        // Initialize voice recognition
+        document.addEventListener('DOMContentLoaded', function() {
+            initVoiceRecognition();
+        });
+
+        // Emergency contact validation
+        function validateEmergencyContact() {
+            const emergencyBtns = document.querySelectorAll('.emergency-btn');
+            emergencyBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    if (this.href.includes('XXXXXXXXXX')) {
+                        e.preventDefault();
+                        alert('Please replace the phone number with actual emergency contact numbers before deployment.');
+                    }
+                });
+            });
+        }
+
+        // Initialize emergency contact validation
+        document.addEventListener('DOMContentLoaded', function() {
+            validateEmergencyContact();
+        });
+
+        // Panic button - quick emergency call
+        function addPanicButton() {
+            const panicBtn = document.createElement('div');
+            panicBtn.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                width: 60px;
+                height: 60px;
+                background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+                color: white;
+                cursor: pointer;
+                box-shadow: 0 4px 20px rgba(255, 107, 107, 0.4);
+                z-index: 1000;
+                animation: pulse 2s infinite;
+            `;
+            panicBtn.innerHTML = '🚨';
+            panicBtn.onclick = function() {
+                window.location.href = 'tel:+917416557557';
+            };
+            document.body.appendChild(panicBtn);
+        }
+
+        // Initialize panic button
+        document.addEventListener('DOMContentLoaded', function() {
+            addPanicButton();
+        });
+    </script>
+</body>
+</html>
